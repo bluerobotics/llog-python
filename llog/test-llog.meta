@@ -1,0 +1,70 @@
+{
+  "0": {
+    "llType": "error",
+    "columns": [
+      {
+        "llabel": "error message",
+        "dtype": "str"
+      }
+    ]
+  },
+  "1": {
+    "llType": "data",
+    "columns": [
+      {
+        "llabel": "p",
+        "units": "mbar",
+        "dtype": "float",
+        "color": "orange",
+        "style": "x-"
+      },
+      {
+        "llabel": "t",
+        "units": "C",
+        "dtype": "int",
+        "color": "purple",
+        "style": "o-"
+      },
+      {
+        "llabel": "gx",
+        "units": "dps",
+        "dtype": "float",
+        "color": "green",
+        "style": ".-"
+      },
+      {
+        "llabel": "gy",
+        "units": "dps",
+        "dtype": "float",
+        "color": "black",
+        "style": ".-"
+      },
+      {
+        "llabel": "gz",
+        "units": "dps",
+        "dtype": "float",
+        "color": "red",
+        "style": ".-"
+      }
+    ]
+  },
+  "5": {
+    "llType": "rom",
+    "columns": [
+        {
+            "llabel": "romA",
+            "dtype": "float"
+        },
+        {
+            "llabel": "romB",
+            "dtype": "int"
+        }
+    ]
+  },
+  "2": {
+    "llType": "configuration"
+  },
+  "4": {
+    "llType": "calibration"
+  }
+}
