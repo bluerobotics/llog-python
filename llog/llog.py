@@ -165,7 +165,7 @@ class LLogReader:
             setattr(self, llType, value)
 
     def figure(self, height_ratios=[1,4,4], columns=2, suptitle='', header='', footer=''):
-        f = plt.figure(suptitle, figsize=(8.5, 11.0))
+        f = plt.figure(figsize=(8.5, 11.0))
         plt.suptitle(suptitle)
         footer_buffer_ratio = sum(height_ratios) * 0.02
         height_ratios.append(footer_buffer_ratio)
