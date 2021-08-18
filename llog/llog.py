@@ -154,6 +154,10 @@ class LLogReader:
         # or remove these columns from the logdataframe completely
         self.df.rename(columns={0:'time', 1:'llKey'}, inplace=True)
         self.df['llKey'] = self.df['llKey'].astype(int)
+        # convert times to timestamps
+        self.df['time'] = pd.to_datetime(self.df['time'], unit='s')
+        # convert timestamps to timedeltas (duration from start of test)
+        self.df['time'] -= self.df['time'][0]
 
         for llKey, llDesc in self.meta.items():
             DF = self.df
