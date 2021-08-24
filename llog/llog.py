@@ -90,11 +90,11 @@ class LLogDataFrame(pd.DataFrame):
         # series types according to metadata
         if self.meta is not None:
             columns = self.meta.get('columns', [])
-            l = min(len(columns), len(self.columns)-2)
+            l = min(len(columns), len(self.columns))
             for c in range(l):
                 try:
                     dtype = columns[c]['dtype']
-                    i = c+2
+                    i = c
                     if dtype == "int":
                         self[i] = self[i].astype(int)
 
@@ -107,8 +107,8 @@ class LLogDataFrame(pd.DataFrame):
                     except Exception as e:
                         pass
                 llabel = columns[c]['llabel']
+                # we add 2 to the index because we drop the first two columns: time and llKey
                 self.rename(columns={c+2:llabel}, inplace=True)
-                # self[c+2].rename(llabel, inplace=True)
 
     @property
     def _constructor(self):
@@ -146,13 +146,13 @@ class LLogDataFrame(pd.DataFrame):
 
 class LLogReader:
     def __init__(self, logfile, metafile):
-        self.df = pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=False)
+        self.df = pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=True)
         with open(metafile, 'r') as f:
             self.meta = json.load(f)
 
         # todo move this to LLogDataFrame constructor
         # or remove these columns from the logdataframe completely
-        self.df.rename(columns={0:'time', 1:'llKey'}, inplace=True)
+        self.df.rename(columns={1:'llKey'}, inplace=True)
         self.df['llKey'] = self.df['llKey'].astype(int)
         # convert times to timestamps
         self.df['time'] = pd.to_datetime(self.df['time'], unit='s')
@@ -161,7 +161,7 @@ class LLogReader:
 
         for llKey, llDesc in self.meta.items():
             DF = self.df
-            value = DF[DF['llKey'] == int(llKey)].dropna(axis='columns', how='all')
+            value = DF[DF['llKey'] == int(llKey)].dropna(axis='columns', how='all').drop('llKey', 1)
             # eg for each llType name in log, set self.type to
             # the dataframe representing only that type
             value = LLogDataFrame(value, meta=llDesc)
