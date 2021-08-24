@@ -130,12 +130,48 @@ class LLogDataFrame(pd.DataFrame):
             plt.twinx()
             d2.pplot(*args, **kwargs)
 
-    def table(self, rl=False, *args, **kwargs):
+    def ttable(self, rl=False, *args, **kwargs):
         if rl is True:
             kwargs['rowLabels'] = self.index
-        plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1], *args, **kwargs)
+
+        # rasterized = True...
+        t = plt.table(cellText=self.to_numpy(dtype=str), colLabels=self.columns, loc='bottom', cellLoc='center', bbox=[0,0,1,1], *args, **kwargs)
+
+        t.auto_set_font_size(False)
+        t.set_fontsize(8)
+
+        # row labels add an extra column
+        min = rl*-1
+
+        # for each row find the max number of lines in that row...
+        # iterate rows..
+        for i in range(len(self.index) + 1):
+            text = t[i,0].get_text().get_text()
+            lines = text.count('\n') + 1
+
+            # iterate columns and find the max height...
+            maxLines = 0
+            for j in range(min, len(self.columns)):
+                # there is no row label for the row of cells holding the column labels
+                if i == 0 and j == -1:
+                    continue
+                text = t[i,j].get_text().get_text()
+                lines = text.count('\n')
+                if lines > maxLines:
+                    maxLines = lines
+
+            # iterate columns and set the height...
+            for j in range(min, len(self.columns)):
+                # there is no row label for the row of cells holding the column labels
+                if i == 0 and j == -1:
+                    continue
+                t[i,j].set_height(maxLines + 1)
+
         plt.axis('off')
         plt.title(self.meta['llType'])
+
+        # todo, these things might be necessary in plot, or there might be a better way
+        # to format things
         plt.tight_layout()
         plt.subplots_adjust(wspace=0.5, hspace=0.5)
 
