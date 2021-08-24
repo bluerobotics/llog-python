@@ -33,10 +33,10 @@ dg = log.data[['gx', 'gy', 'gz']]
 
 header = 'test-llog.py report header'
 footer = 'test-llog.py report footer'
-f, spec = log.figure(height_ratios=[1,2,4,2], columns=3, suptitle='some data plots', header=header, footer=footer)
+f, spec = log.figure(height_ratios=[2,2,4,2], columns=3, suptitle='some data plots', header=header, footer=footer)
 
 plt.subplot(spec[0,:])
-log.rom.table()
+log.rom.ttable()
 
 plt.subplot(spec[1,0])
 dp.pplot(d2=dt, title='pressure + temperature')
@@ -61,16 +61,15 @@ with PdfPages('test.pdf') as pdf:
     f, spec = log.figure(height_ratios=[2,6], columns=1, suptitle='gyro data head', header=header, footer=footer)
     plt.subplot(spec[0])
     dgs = dg.stats()
-    dg.stats().table(rl=True)
+    dg.stats().ttable(rl=True)
 
     plt.subplot(spec[1])
-    dg.insert(0, 'time', log.data.time)
-    dg.head(20).table()
+    dg.head(20).ttable(rl=True)
     pdf.savefig()
 
     f, spec = log.figure(height_ratios=[1], columns=1, suptitle='log errors', header=header, footer=footer)
     plt.subplot(spec[0])
-    log.error.table()
+    log.error.ttable(rl=True)
     pdf.savefig()
 
 plt.show()
