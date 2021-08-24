@@ -60,11 +60,5 @@
             "dtype": "int"
         }
     ]
-  },
-  "2": {
-    "llType": "configuration"
-  },
-  "4": {
-    "llType": "calibration"
   }
 }
