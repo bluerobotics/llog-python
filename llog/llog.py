@@ -75,7 +75,6 @@ class LLogSeries(pd.Series):
         
         plt.grid(True)
         plt.tight_layout()
-        plt.subplots_adjust(wspace=0.5, hspace=0.5)
 
     def stats(self):
         return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
@@ -204,10 +203,7 @@ class LLogDataFrame(pd.DataFrame):
         plt.axis('off')
         plt.title(self.meta['llType'])
 
-        # todo, these things might be necessary in plot, or there might be a better way
-        # to format things
         plt.tight_layout()
-        plt.subplots_adjust(wspace=0.5, hspace=0.5)
 
     def stats(self):
         stats = self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
