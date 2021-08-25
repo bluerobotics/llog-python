@@ -209,9 +209,9 @@ class LLogReader:
         self.df.rename(columns={1:'llKey'}, inplace=True)
         self.df['llKey'] = self.df['llKey'].astype(int)
         # convert times to timestamps
-        self.df['time'] = pd.to_datetime(self.df['time'], unit='s')
+        self.df.index = pd.to_datetime(self.df.index, unit='s')
         # convert timestamps to timedeltas (duration from start of test)
-        self.df['time'] -= self.df['time'][0]
+        self.df.index -= self.df.index[0]
 
         for llKey, llDesc in self.meta.items():
             DF = self.df
