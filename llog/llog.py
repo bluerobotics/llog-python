@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+import datetime
 import json
 import time
 
@@ -68,12 +70,26 @@ class LLogSeries(pd.Series):
             plt.twinx()
             d2.pplot(*args, **kwargs)
         
+        ax = plt.gca()
+        ax.xaxis.set_major_formatter(self.format_time_ticks)
+        
         plt.grid(True)
         plt.tight_layout()
         plt.subplots_adjust(wspace=0.5, hspace=0.5)
 
     def stats(self):
         return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
+    
+    @staticmethod
+    @matplotlib.ticker.FuncFormatter
+    def format_time_ticks(x, pos):
+        """ Convert timedelta64[ns] duration into H:M:S format for plotting.
+        
+        Idea sourced from https://stackoverflow.com/a/42220184
+        
+        """
+        seconds = x / 10**9 # convert nanoseconds to seconds
+        return str(datetime.timedelta(seconds=seconds))
         
 
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
