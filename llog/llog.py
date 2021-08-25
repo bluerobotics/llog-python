@@ -61,7 +61,7 @@ class LLogSeries(pd.Series):
             except KeyError as e:
                 # print(e)
                 pass
-        
+
         self.plot(*args, **kwargs2)
         plt.legend()
         plt.ylabel(meta.get('units'))
@@ -69,27 +69,28 @@ class LLogSeries(pd.Series):
         if d2 is not None:
             plt.twinx()
             d2.pplot(*args, **kwargs)
-        
+
         ax = plt.gca()
         ax.xaxis.set_major_formatter(self.format_time_ticks)
-        
+
         plt.grid(True)
+
         plt.tight_layout()
 
     def stats(self):
         return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
-    
+
     @staticmethod
     @matplotlib.ticker.FuncFormatter
     def format_time_ticks(x, pos):
         """ Convert timedelta64[ns] duration into H:M:S format for plotting.
-        
+
         Idea sourced from https://stackoverflow.com/a/42220184
-        
+
         """
         seconds = x / 10**9 # convert nanoseconds to seconds
         return str(datetime.timedelta(seconds=seconds))
-        
+
 
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
 class LLogDataFrame(pd.DataFrame):
@@ -149,7 +150,7 @@ class LLogDataFrame(pd.DataFrame):
             df = LLogDataFrame(*args, meta=self.meta, **kwargs)
             return df
         return _c
-        
+
     @property
     def _constructor_sliced(self):
         return LLogSeries
