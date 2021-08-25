@@ -238,7 +238,7 @@ class LLogReader:
         spec = f.add_gridspec(rows, columns, height_ratios=height_ratios)
         f.text(0.98, 0.98, header, size=8, horizontalalignment='right', verticalalignment='bottom')
         f.text(0.98, 0.02, footer, size=8, horizontalalignment='right')
-        
+
         # add a line, using our footer buffer subplot (the line is plotted in figure coords)
         f.add_subplot(spec[-1,:])
         plt.plot([0.35, 0.65], [0.02, 0.02], color='#2c99ce', lw=3, clip_on=False, transform=f.transFigure)
