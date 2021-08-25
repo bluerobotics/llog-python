@@ -215,7 +215,14 @@ class LLogReader:
 
         for llKey, llDesc in self.meta.items():
             DF = self.df
-            value = DF[DF['llKey'] == int(llKey)].dropna(axis='columns', how='all').drop('llKey', 1)
+            value = DF[DF['llKey'] == int(llKey)]
+            if value.size == 0:
+                # no log entries for this llType
+                continue
+            value = value.dropna(axis='columns', how='all')
+            value = value.drop('llKey', 1)
+
+
             # eg for each llType name in log, set self.type to
             # the dataframe representing only that type
             value = LLogDataFrame(value, meta=llDesc)
