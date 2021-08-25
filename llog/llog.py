@@ -89,26 +89,44 @@ class LLogDataFrame(pd.DataFrame):
         # rename column index labels, and change column
         # series types according to metadata
         if self.meta is not None:
-            columns = self.meta.get('columns', [])
-            l = min(len(columns), len(self.columns))
-            for c in range(l):
+            # get column metadata
+            metaColumns = self.meta.get('columns', [])
+
+            # meatadata or dataframe columns, which is shortest?
+            l = min(len(metaColumns), len(self.columns))
+
+            # rename columns, if necessary
+            for n in range(l):
+                llabel = metaColumns[n]['llabel']
+                # we add 2 to the index because we drop the first two columns: time and llKey
+                self.rename(columns={n+2:llabel}, inplace=True)
+
+            for n in range(l):
                 try:
-                    dtype = columns[c]['dtype']
-                    i = c
+                    # our columns index name
+                    name = self.columns[n]
+                    # find column metadata by name
+                    # there is probably a better way to format the metadata to make this easier
+                    meta = [x for x in metaColumns if x['llabel'] == name][0]
+                except IndexError as e:
+                    # no metadata
+                    continue
+
+                try:
+                    dtype = meta['dtype']
+
                     if dtype == "int":
-                        self[i] = self[i].astype(int)
+                        self[name] = self[name].astype(int)
 
                     elif dtype == "float":
-                        self[i] = self[i].astype(float)
+                        self[name] = self[name].astype(float)
 
                 except KeyError as e:
                     try:
-                        self[i] = self[i].astype(float)
+                        self[name] = self[name].astype(float)
                     except Exception as e:
                         pass
-                llabel = columns[c]['llabel']
-                # we add 2 to the index because we drop the first two columns: time and llKey
-                self.rename(columns={c+2:llabel}, inplace=True)
+
 
     @property
     def _constructor(self):
