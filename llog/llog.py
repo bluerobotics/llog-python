@@ -284,8 +284,9 @@ class LLogWriter:
             # fewer columns than the first row
             self.log(LLOG_NONE, '                                                 ')
 
-    def log(self, type, data):
-        t = time.time()
+    def log(self, type, data, t=None):
+        if t is None:
+            t = time.time()
         logstring = f'{t:.6f} {type} {data}\n'
         if self.console:
             print(logstring, end='')
