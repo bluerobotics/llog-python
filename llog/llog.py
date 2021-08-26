@@ -99,24 +99,32 @@ class LLogDataFrame(pd.DataFrame):
         self.meta = kwargs.pop('meta', None)
         super().__init__(*args, **kwargs)
 
+        # self.meta is not None:
         # sometimes dataframe meta is not provided in intermediate operations
         # so we need to check if self.meta exists
         # rename column index labels, and change column
         # series types according to metadata
-        if self.meta is not None:
+        #
+        # 2 in self.columns:
+        # this is a hack, and should find a better way
+        # we only want to convert the type during initial construction of the datafame
+        # to do that, we are checking that we have not renamed the columns yet
+        # this prevents converting the type in resulting copies or during intermediate operations
+        # ex for results of astype() or logical operations
+        # i'm not sure what i've created here, but to follow what's going on, look at the order of
+        # LLogDataFrame.__init__, LLogDataFrame._constructor, and LLogSeries.expanddim
+        if self.meta is not None and 2 in self.columns:
             # get column metadata
             metaColumns = self.meta.get('columns', [])
 
-            # meatadata or dataframe columns, which is shortest?
+            # metadata or dataframe columns, which is shortest?
             l = min(len(metaColumns), len(self.columns))
 
-            # rename columns, if necessary
             for n in range(l):
                 llabel = metaColumns[n]['llabel']
                 # we add 2 to the index because we drop the first two columns: time and llKey
                 self.rename(columns={n+2:llabel}, inplace=True)
 
-            for n in range(l):
                 try:
                     # our columns index name
                     name = self.columns[n]
@@ -129,17 +137,16 @@ class LLogDataFrame(pd.DataFrame):
 
                 try:
                     dtype = meta['dtype']
-
                     if dtype == "int":
                         self[name] = self[name].astype(int)
-
                     elif dtype == "float":
                         self[name] = self[name].astype(float)
-
                 except KeyError as e:
                     try:
+                        # assume float/numeric data
                         self[name] = self[name].astype(float)
                     except Exception as e:
+                        # if it's a string it will fail, and the type will be object
                         pass
 
 
