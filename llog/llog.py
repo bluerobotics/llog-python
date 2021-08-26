@@ -52,7 +52,6 @@ class LLogSeries(pd.Series):
                 break
 
         kwargs2 = kwargs | {'label': self.name}
-        kwargs2 = kwargs2 | {'markersize': 1}
         kwargs2 = kwargs2 | {'rasterized': True}
 
         for opt in ["color", "style", "label", "colormap"]:
