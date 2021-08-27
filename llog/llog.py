@@ -239,7 +239,7 @@ class LLogReader:
                 # no log entries for this llType
                 continue
             value = value.dropna(axis='columns', how='all')
-            value = value.drop('llKey', 1)
+            value = value.drop('llKey', axis=1)
 
 
             # eg for each llType name in log, set self.type to
