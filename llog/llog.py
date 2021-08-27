@@ -219,7 +219,7 @@ class LLogDataFrame(pd.DataFrame):
 
 class LLogReader:
     def __init__(self, logfile, metafile):
-        self.df = pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=True)
+        self.df = pd.read_csv(logfile, sep=' ', header=None).dropna(axis='columns', how='all').set_index(0, drop=True).sort_index()
         with open(metafile, 'r') as f:
             self.meta = json.load(f)
 
