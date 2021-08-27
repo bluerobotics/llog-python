@@ -238,9 +238,11 @@ class LLogReader:
             if value.size == 0:
                 # no log entries for this llType
                 continue
-            value = value.dropna(axis='columns', how='all')
-            value = value.drop('llKey', axis=1)
 
+            # drop any entirely N/A columns
+            value = value.dropna(axis='columns', how='all')
+            # drop the llKey column
+            value = value.drop('llKey', axis=1)
 
             # eg for each llType name in log, set self.type to
             # the dataframe representing only that type
