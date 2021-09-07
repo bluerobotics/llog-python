@@ -298,3 +298,9 @@ class LLogWriter:
     def close(self):
         if self.logfile:
             self.logfile.close()
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, *exc):
+        self.close()
