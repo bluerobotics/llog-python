@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
+import numpy as np
 import datetime
 import json
 import time
@@ -141,6 +142,9 @@ class LLogDataFrame(pd.DataFrame):
                         self[name] = self[name].astype(int)
                     elif dtype == "float":
                         self[name] = self[name].astype(float)
+                    elif dtype == "vector":
+                        for n in self.index:
+                            self[name][n] = np.fromstring(self[name][n], dtype=float, sep=',')
                 except KeyError as e:
                     try:
                         # assume float/numeric data
