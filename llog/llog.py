@@ -286,7 +286,7 @@ class LLogReader:
         'device' is the string name of the device.
         
         """
-        default_meta = Path(file).resolve().parent / f'{device}.meta')
+        default_meta = Path(file).resolve().parent / f'{device}.meta'
         
         parser = ArgumentParser(description=f'{device} test report')
         parser.add_argument('-i', '--input', action='store', type=str, required=True,
