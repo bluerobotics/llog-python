@@ -142,6 +142,8 @@ class LLogDataFrame(pd.DataFrame):
                         self[name] = self[name].astype(int)
                     elif dtype == "float":
                         self[name] = self[name].astype(float)
+                    elif dtype == "bool":
+                        self[name] = self[name].astype(bool)
                     elif dtype == "vector":
                         for n in self.index:
                             self[name][n] = np.fromstring(self[name][n], dtype=float, sep=',')
