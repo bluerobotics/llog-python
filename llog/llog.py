@@ -6,10 +6,10 @@ import datetime
 import json
 import time
 
-import os
+from argparse import ArgumentParser
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-logo_path = dir_path + '/br.png'
+from pathlib import Path
+logo_path = Path(__file__).resolve().parent / 'br.png'
 
 # https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#custom-describe
 from functools import partial
@@ -153,7 +153,6 @@ class LLogDataFrame(pd.DataFrame):
                         # if it's a string it will fail, and the type will be object
                         pass
 
-
     @property
     def _constructor(self):
         def _c(*args, **kwargs):
@@ -273,6 +272,27 @@ class LLogReader:
         im = plt.imread(logo_path)
         f.figimage(im, 2, 2)
         return f, spec
+    
+    @staticmethod
+    def create_default_parser(file, device, default_output=None):
+        """ Returns the default argparse ArgumentParser for a LLogReader script.
+        
+        Has a description of '{device} test report', and includes arguments for
+         --input, --output, --meta, and --show, with single-letter short forms (e.g. -i).
+        
+        'file' is a file adjacent to the relevant {device}.meta file - normally just __file__.
+        'device' is the string name of the device.
+        
+        """
+        default_meta = Path(file).resolve().parent / f'{device}.meta')
+        
+        parser = ArgumentParser(description=f'{device} test report')
+        parser.add_argument('-i', '--input', action='store', type=str, required=True)
+        parser.add_argument('-o', '--output', action='store', type=str, default=default_output)
+        parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta)
+        parser.add_argument('-s', '--show', action='store_true')
+        
+        return parser
 
 
 class LLogWriter:
@@ -308,3 +328,23 @@ class LLogWriter:
     
     def __exit__(self, *exc):
         self.close()
+        
+    @staticmethod
+    def create_default_parser(file, device, default_output=None, default_frequency=None):
+        """ Returns the default argparse ArgumentParser for a LLogWriter script.
+        
+        Has a description of '{device} test', and includes arguments for
+         --output, --meta, and --frequency, with single-letter short forms (e.g. -o).
+        
+        'file' is a file adjacent to the relevant {device}.meta file - normally just __file__.
+        'device' is the string name of the device.
+        
+        """
+        default_meta = Path(file).resolve().parent / f'{device}.meta')
+        
+        parser = ArgumentParser(description=f'{device} test')
+        parser.add_argument('-o', '--output', action='store', type=str, default=default_output)
+        parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta)
+        parser.add_argument('-f', '--frequency', action='store', type=int, default=default_frequency)
+        
+        return parser
