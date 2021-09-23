@@ -289,10 +289,14 @@ class LLogReader:
         default_meta = Path(file).resolve().parent / f'{device}.meta')
         
         parser = ArgumentParser(description=f'{device} test report')
-        parser.add_argument('-i', '--input', action='store', type=str, required=True)
-        parser.add_argument('-o', '--output', action='store', type=str, default=default_output)
-        parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta)
-        parser.add_argument('-s', '--show', action='store_true')
+        parser.add_argument('-i', '--input', action='store', type=str, required=True,
+                            help='input filename')
+        parser.add_argument('-o', '--output', action='store', type=str, default=default_output,
+                            help=f'output filename, {default_output = }')
+        parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta,
+                            help=f'metadata filename, {default_meta = }')
+        parser.add_argument('-s', '--show', action='store_true',
+                            help='flag to show the generated figure')
         
         return parser
 
@@ -313,6 +317,11 @@ class LLogWriter:
             self.log(LLOG_NONE, '                                                 ')
 
     def log(self, type, data, t=None):
+        """ Logs some 'data' with llog-type 'type', at time 't'.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
         if t is None:
             t = time.time()
         logstring = f'{t:.6f} {type} {data}\n'
@@ -324,6 +333,96 @@ class LLogWriter:
     def close(self):
         if self.logfile:
             self.logfile.close()
+
+    def log_error(self, error, t=None):
+        """ Helper. Logs 'error' at time 't'.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
+        self.log(LLOG_ERROR, error, t)
+        
+    def log_data(self, data, t=None):
+        """ Helper. Logs measurement 'data' at time 't'.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
+        self.log(LLOG_DATA, data, t)
+        
+    def log_config(self, config, t=None):
+        """ Helper. Logs 'config' at time 't', formatted as a string. 
+        
+        For application-specific configuration information.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
+        self.log(LLOG_CONFIG, config, t)
+        
+    def log_calibration(self, data, t=None):
+        """ Helper. Logs calibration 'data' at time 't'. 
+        
+        Expects data from a calibration process.
+        For logging factory calibration data use self.log_rom() instead.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
+        self.log(LLOG_CALIBRATION, data, t)
+        
+    def log_rom(self, data, t=None):
+        """ Helper. Logs read-only-memory 'data' at time 't'. 
+        
+        The correct method for factory calibration and serialization type information.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
+        self.log(LLOG_ROM, data, t)
+        
+    def log_info(self, info, t=None):
+        """ Helper. Logs 'info'/notes at time 't'.
+        
+        If 't' is unspecified, the current time is used.
+        
+        """
+        self.log(LLOG_INFO, info, t)
+        
+    def log_data_loop(self, data_getter, frequency=None, duration=float('inf'), 
+                      stop_on_error=False, parser_args=None):
+        """ Starts a loop that logs calls to the 'data_getter'.
+        
+        'frequency' can be set to a Hz value to add a delay between data_getter calls.
+           Defaults to no added delay.
+        'duration' is the time in seconds to log data for. Defaults to infinite.
+        'stop_on_error' is a boolean specifying whether the loop should stop if an
+           Exception is encountered. Defaults to not stopping.
+           NOTE: KeyboardInterrupts are not Exceptions, so will still stop the loop.
+        'parser_args' is the result of an ArgumentParser().parse() call, to be used
+           instead of the other keyword arguments. It should have the parameters
+           'frequency', 'duration', and 'stop_on_error'.
+          
+        """
+        if parser_args:
+            frequency = parser_args.frequency
+            duration = parser_args.duration
+            stop_on_error = parser_args.stop_on_error
+
+        if frequency:
+            delay = 1 / frequency
+        
+        start_time = time.time()
+        while (measurement_time := time.time()) - start_time < duration:
+            try:
+                self.log_data(data_getter(), measurement_time)
+            except Exception as e:
+                self.log_error(e, measurement_time)
+                if stop_on_error:
+                    return
+            
+            if frequency:
+                time.sleep(delay)
     
     def __enter__(self):
         return self
@@ -332,21 +431,29 @@ class LLogWriter:
         self.close()
         
     @staticmethod
-    def create_default_parser(file, device, default_output=None, default_frequency=None):
+    def create_default_parser(file, device, default_output=None, default_frequency=None,
+                              default_duration=float('inf')):
         """ Returns the default argparse ArgumentParser for a LLogWriter script.
         
-        Has a description of '{device} test', and includes arguments for
-         --output, --meta, and --frequency, with single-letter short forms (e.g. -o).
+        Has a description of '{device} test', and includes argument options for
+         --output, --meta, --frequency, and --duration, with single-letter short forms (e.g. -o).
         
         'file' is a file adjacent to the relevant {device}.meta file - normally just __file__.
         'device' is the string name of the device.
         
         """
-        default_meta = Path(file).resolve().parent / f'{device}.meta')
+        default_meta = Path(file).resolve().parent / f'{device}.meta'
         
         parser = ArgumentParser(description=f'{device} test')
-        parser.add_argument('-o', '--output', action='store', type=str, default=default_output)
-        parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta)
-        parser.add_argument('-f', '--frequency', action='store', type=int, default=default_frequency)
+        parser.add_argument('-o', '--output', action='store', type=str, default=default_output,
+                            help=f'output filename, {default_output = }')
+        parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta,
+                            help=f'metadata filename, {default_meta = }')
+        parser.add_argument('-f', '--frequency', action='store', type=int, default=default_frequency,
+                            help=f'data collection frequency, {default_frequency = } Hz')
+        parser.add_argument('-d', '--duration', action='store', type=float, default=default_duration,
+                            help=f'test duration ({default_duration = } seconds)')
+        parser.add_argument('-e', '--stop_on_error', action='store_true',
+                            help='flag to stop logging data if an error occurs')
         
         return parser
