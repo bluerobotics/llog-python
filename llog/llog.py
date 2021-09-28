@@ -292,9 +292,9 @@ class LLogReader:
         parser.add_argument('-i', '--input', action='store', type=str, required=True,
                             help='input filename')
         parser.add_argument('-o', '--output', action='store', type=str, default=default_output,
-                            help=f'output filename, {default_output = }')
+                            help=f'output filename (default = {default_output})')
         parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta,
-                            help=f'metadata filename, {default_meta = }')
+                            help=f'metadata filename (default = {default_meta})')
         parser.add_argument('-s', '--show', action='store_true',
                             help='flag to show the generated figure')
         
@@ -446,13 +446,13 @@ class LLogWriter:
         
         parser = ArgumentParser(description=f'{device} test')
         parser.add_argument('-o', '--output', action='store', type=str, default=default_output,
-                            help=f'output filename, {default_output = }')
+                            help=f'output filename (default = {default_output})')
         parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta,
-                            help=f'metadata filename, {default_meta = }')
+                            help=f'metadata filename (default = {default_meta})')
         parser.add_argument('-f', '--frequency', action='store', type=int, default=default_frequency,
-                            help=f'data collection frequency, {default_frequency = } Hz')
+                            help=f'data collection frequency (default = {default_frequency} Hz)')
         parser.add_argument('-d', '--duration', action='store', type=float, default=default_duration,
-                            help=f'test duration ({default_duration = } seconds)')
+                            help=f'test duration (default = {default_duration} seconds)')
         parser.add_argument('-e', '--stop_on_error', action='store_true',
                             help='flag to stop logging data if an error occurs')
         
