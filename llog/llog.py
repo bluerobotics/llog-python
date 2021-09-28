@@ -52,12 +52,13 @@ class LLogSeries(pd.Series):
                 meta = c
                 break
 
-        kwargs2 = kwargs | {'label': self.name}
-        kwargs2 = kwargs2 | {'rasterized': True}
+        kwargs2 = kwargs
+        kwargs2.update({'label': self.name})
+        kwargs2.update({'rasterized': True})
 
         for opt in ["color", "style", "label", "colormap"]:
             try:
-                kwargs2 = kwargs2 | {opt:meta[opt]}
+                kwargs2.update({opt:meta[opt]})
             except KeyError as e:
                 # print(e)
                 pass
