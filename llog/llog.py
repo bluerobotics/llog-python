@@ -410,21 +410,19 @@ class LLogWriter:
             duration = parser_args.duration
             stop_on_error = parser_args.stop_on_error
 
-        if frequency:
-            delay = 1 / frequency
-        
         start_time = time.time()
-        while (measurement_time := time.time()) - start_time < duration:
+        while time.time() < start_time + duration:
             try:
-                self.log_data(data_getter(), measurement_time)
+                self.log_data(data_getter())
             except Exception as e:
-                self.log_error(e, measurement_time)
+                self.log_error(e)
                 if stop_on_error:
                     return
             
             if frequency:
-                time.sleep(delay)
-    
+                time.sleep(1.0 / frequency)
+
+
     def __enter__(self):
         return self
     
