@@ -9,5 +9,12 @@ setup(
     author='Blue Robotics',
     url='https://github.com/bluerobotics/llog-python',
     packages=['llog'],
-    package_data={'llog': ['br.png']}
+    package_data={'llog': ['br.png']},
+    install_requires=[
+        'jinja2',
+        'matplotlib',
+        'numpy',
+        'pandas',
+        'pypdf2',
+    ],
 )
