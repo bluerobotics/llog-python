@@ -430,7 +430,7 @@ class LLogWriter:
         self.close()
         
     @staticmethod
-    def create_default_parser(file, device, default_output=None, default_frequency=None,
+    def create_default_parser(file, device, default_console=False, default_output=None, default_frequency=None,
                               default_duration=float('inf')):
         """ Returns the default argparse ArgumentParser for a LLogWriter script.
         
@@ -446,6 +446,8 @@ class LLogWriter:
         parser = ArgumentParser(description=f'{device} test')
         parser.add_argument('-o', '--output', action='store', type=str, default=default_output,
                             help=f'output filename (default = {default_output})')
+        parser.add_argument('-c', '--console', action='store_true', default=default_console,
+                            help=f'stdout/console output (default = {default_console})')
         parser.add_argument('-m', '--meta', action='store', type=str, default=default_meta,
                             help=f'metadata filename (default = {default_meta})')
         parser.add_argument('-f', '--frequency', action='store', type=int, default=default_frequency,
