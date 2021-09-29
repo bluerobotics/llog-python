@@ -303,7 +303,7 @@ class LLogReader:
 
 
 class LLogWriter:
-    def __init__(self, metafile, logfile=None, console=True):
+    def __init__(self, metafile, logfile=None, console=False):
         with open(metafile, 'r') as f:
             self.meta = json.load(f)
         self.logfile = logfile
