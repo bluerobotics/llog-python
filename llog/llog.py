@@ -141,6 +141,8 @@ class LLogDataFrame(pd.DataFrame):
                     dtype = meta['dtype']
                     if dtype == "int":
                         self[name] = self[name].astype(int)
+                    if dtype == "int64":
+                        self[name] = self[name].astype(np.int64)
                     elif dtype == "float":
                         self[name] = self[name].astype(float)
                     elif dtype == "bool":
