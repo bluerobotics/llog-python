@@ -419,7 +419,7 @@ class LLogWriter:
             try:
                 self.log_data(data_getter())
             except Exception as e:
-                self.log_error(e)
+                self.log_error(f'"{e}"')
                 if stop_on_error:
                     return
             
