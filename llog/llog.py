@@ -305,14 +305,14 @@ class LLogReader:
 
 
 class LLogWriter:
-    def __init__(self, metafile, logfile=None, console=False):
+    def __init__(self, metafile, logfile=None, console=False, force=False):
         with open(metafile, 'r') as f:
             self.meta = json.load(f)
         self.console = console
         self.logfile = None
 
         if logfile:
-            if Path(logfile).exists():
+            if Path(logfile).exists() and not force:
                 raise(Exception(f'{logfile} exists! skipping ..'))
             else:
                 self.logfile = open(logfile, 'w')
