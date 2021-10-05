@@ -139,7 +139,11 @@ class LLogDataFrame(pd.DataFrame):
 
                 try:
                     dtype = meta['dtype']
+                    # this happens when there is an
+                    # incomplete line at the end of the file
+                    self.drop(self[name] == NaN, inplace=True)
                     if dtype == "int":
+
                         self[name] = self[name].astype(int)
                     if dtype == "int64":
                         self[name] = self[name].astype(np.int64)
