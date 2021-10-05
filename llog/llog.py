@@ -30,7 +30,7 @@ LLOG_CALIBRATION = '4'
 LLOG_ROM = '5'
 # information/notes
 LLOG_INFO = '6'
-LLOG_NONE= '666'
+LLOG_NONE = '666'
 
 # https://stackoverflow.com/questions/47466255/subclassing-a-pandas-dataframe-updates
 class LLogSeries(pd.Series):
