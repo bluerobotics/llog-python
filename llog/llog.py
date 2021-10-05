@@ -308,16 +308,18 @@ class LLogWriter:
     def __init__(self, metafile, logfile=None, console=False):
         with open(metafile, 'r') as f:
             self.meta = json.load(f)
-        self.logfile = logfile
         self.console = console
+        self.logfile = None
 
-        if self.logfile:
-            # todo error if it exists
-            self.logfile = open(self.logfile, 'w')
-            # this is a hack
-            # pandas will have an error if any row has
-            # fewer columns than the first row
-            self.log(LLOG_NONE, '                                                 ')
+        if logfile:
+            if Path(logfile).exists():
+                raise(Exception(f'{logfile} exists! skipping ..'))
+            else:
+                self.logfile = open(logfile, 'w')
+                # this is a hack
+                # pandas will have an error if any row has
+                # fewer columns than the first row
+                self.log(LLOG_NONE, '                                                 ')
 
     def log(self, type, data, t=None):
         """ Logs some 'data' with llog-type 'type', at time 't'.
