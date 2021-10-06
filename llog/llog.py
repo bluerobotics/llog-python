@@ -139,14 +139,10 @@ class LLogDataFrame(pd.DataFrame):
 
                 try:
                     dtype = meta['dtype']
-                    # this happens when there is an
-                    # incomplete line at the end of the file
-                    self.drop(self[name] == NaN, inplace=True)
                     if dtype == "int":
-
-                        self[name] = self[name].astype(int)
+                        self[name] = pd.to_numeric(self[name], errors='coerce').astype('Int64')
                     if dtype == "int64":
-                        self[name] = self[name].astype(np.int64)
+                        self[name] = pd.to_numeric(self[name], errors='coerce').astype('Int64')
                     elif dtype == "float":
                         self[name] = self[name].astype(float)
                     elif dtype == "bool":
@@ -238,6 +234,10 @@ class LLogReader:
         # todo move this to LLogDataFrame constructor
         # or remove these columns from the logdataframe completely
         self.df.rename(columns={1:'llKey'}, inplace=True)
+
+        # drop rows without any columns (and thus no llKey)
+        self.df.dropna(axis='rows', how='all', inplace=True)
+
         self.df['llKey'] = self.df['llKey'].astype(int)
         # convert times to timestamps
         self.df.index = pd.to_datetime(self.df.index, unit='s')
