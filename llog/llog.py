@@ -71,8 +71,10 @@ class LLogSeries(pd.Series):
             plt.twinx()
             d2.pplot(*args, **kwargs)
 
-        ax = plt.gca()
-        ax.xaxis.set_major_formatter(self.format_time_ticks)
+        xaxis = plt.gca().xaxis
+        test_duration = xaxis.get_data_interval()[-1] / 10**9 # nanoseconds to seconds
+        xaxis.set_major_formatter(self.format_time_ticks_seconds if test_duration < 60
+                                  else self.format_time_ticks)
 
         plt.grid(True)
 
@@ -91,6 +93,13 @@ class LLogSeries(pd.Series):
         """
         seconds = x / 10**9 # convert nanoseconds to seconds
         return str(datetime.timedelta(seconds=seconds))
+    
+    @staticmethod
+    @matplotlib.ticker.FuncFormatter
+    def format_time_ticks_seconds(x, pos):
+        """ Convert timedelta64[ns] duration into x.yyy seconds format for plotting. """
+        seconds = x / 10**9 # convert nanoseconds to seconds
+        return f'{seconds:.3f}' # return rounded to nearest millisecond
 
 
 # https://stackoverflow.com/questions/48325859/subclass-pandas-dataframe-with-required-argument
