@@ -84,7 +84,7 @@ class LLogSeries(pd.Series):
         plt.tight_layout()
 
     def stats(self):
-        return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
+        return self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max", "range"]).round(decimals=6)
 
     @staticmethod
     @matplotlib.ticker.FuncFormatter
@@ -233,7 +233,7 @@ class LLogDataFrame(pd.DataFrame):
         plt.tight_layout()
 
     def stats(self):
-        stats = self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max"])
+        stats = self.agg(["count", "mean", "std", "min", q_25, "median", q_75, "max", "range"]).round(decimals=6)
         return LLogDataFrame(stats, meta=self.meta)
 
 
