@@ -44,6 +44,9 @@ class LLogSeries(pd.Series):
     def _constructor_expanddim(self):
         return LLogDataFrame
 
+    def range(self):
+        return abs(self.max() - self.min())
+
     def pplot(self, d2=None, *args, **kwargs):
         columns = self.meta['columns']
         meta = {}
